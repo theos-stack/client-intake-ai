@@ -3,21 +3,29 @@ import mongoose from "mongoose";
 const MONGODB_URI = process.env.MONGODB_URI as string;
 
 if (!MONGODB_URI) {
-    throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
+    throw new Error("Please define the MONGODB_URI environment variable in .env.local");
 }
 
-let cached = (global as typeof globalThis & {
-    mongoose?: {
-        conn: typeof mongoose | null;
-        promise: Promise<typeof mongoose> | null;
-    };
-}).mongoose;
+type MongooseCache = {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
+};
 
-if (!cached) {
-    cached = global.mongoose = { conn: null, promise: null };
+declare global {
+    // eslint-disable-next-line no-var
+    var mongooseCache: MongooseCache | undefined;
 }
 
-export async function connectDB() {
+const cached: MongooseCache = global.mongooseCache ?? {
+    conn: null,
+    promise: null,
+};
+
+if (!global.mongooseCache) {
+    global.mongooseCache = cached;
+}
+
+export async function connectDB(): Promise<typeof mongoose> {
     if (cached.conn) {
         return cached.conn;
     }
@@ -34,7 +42,6 @@ export async function connectDB() {
         return cached.conn;
     } catch (error) {
         cached.promise = null;
-        console.error("MongoDB connection error:", error);
         throw error;
     }
 }
