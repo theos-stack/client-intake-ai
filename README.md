@@ -1,12 +1,12 @@
 # AI Client Intake Tool
 
-An AI-powered full-stack client onboarding tool built for BrandNovate Digital Inc.'s technical assessment.
+An AI-powered full-stack client onboarding tool built for BrandNovate.
 
 This application allows internal team members to capture new client details, generate a structured onboarding brief using AI, and review previous submissions from a dashboard.
 
 ## Features
 
-- Clean client intake form
+- Client intake form
 - AI-generated onboarding brief
 - MongoDB persistence with timestamps
 - Submission dashboard
